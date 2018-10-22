@@ -3,7 +3,7 @@ import entity.Pyramid;
 import entity.Vector;
 
 public class Calculator {
-    public double calculateDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
+    private double calculateDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
         return Math.sqrt(Math.pow((firstPoint.getX() - secondPoint.getX()), 2)
                 + Math.pow((firstPoint.getY() - secondPoint.getY()), 2)
                 + Math.pow((firstPoint.getZ() - secondPoint.getZ()), 2));
@@ -86,48 +86,27 @@ public class Calculator {
         return result;
     }
 
-    private double calculatePointBetweenTwoPointWithLimit(Point firstPoint, Point secondPoint, double yLimiter) {
-        double dY = Math.abs(firstPoint.getY() - secondPoint.getY());
-        double dX = Math.abs(firstPoint.getX() - secondPoint.getX());
-        Point result = new Point(0d, yLimiter, 0d);
-        double hy = 0;
-        if (secondPoint.getY() >= firstPoint.getY()) {
-            hy = yLimiter - firstPoint.getY();
+    public Point calculatePointOnHeight(Point firstPoint, Point secondPoint, double height) {
+        Point sepSecondPoint = new Point(secondPoint.getX(), firstPoint.getY(), secondPoint.getZ());
+        double distanceFirstAndSecond = calculateDistanceBetweenPoints(firstPoint, secondPoint);
+        double distanceFirstAndSepSecond = Math.sqrt(Math.pow(firstPoint.getX() - sepSecondPoint.getX(), 2) + Math.pow(firstPoint.getZ() - sepSecondPoint.getZ(), 2));
+        double hY = 0;
+        if (firstPoint.getY() <= secondPoint.getY()) {
+            hY = height - firstPoint.getY();
         } else {
-            hy = yLimiter - secondPoint.getY();
+            hY = height - secondPoint.getY();
         }
-        if (firstPoint.getX() <= secondPoint.getX()) {
-            result.setX(firstPoint.getX() + (dX * hy) / dY);
-        } else {
-            result.setX(secondPoint.getX() + (dX * hy) / dY);
-        }
-        return result.getX();
+        double distanceSeconSepSecond = Math.sqrt(Math.pow(distanceFirstAndSecond, 2) - Math.pow(distanceFirstAndSepSecond, 2));
+        double hX = hY * distanceFirstAndSepSecond / distanceSeconSepSecond;
+        double dX = Math.abs(firstPoint.getX() - sepSecondPoint.getX());
+        double dZ = Math.abs(firstPoint.getZ() - sepSecondPoint.getZ());
+        double betta = Math.acos(dZ / distanceFirstAndSepSecond);
+        double proectionX = hX * Math.sin(betta);
+        double proectionZ = hX * Math.cos(betta);
+        sepSecondPoint.setX(firstPoint.getX() + proectionX);
+        sepSecondPoint.setY(height);
+        sepSecondPoint.setZ(firstPoint.getZ() + proectionZ);
+        return sepSecondPoint;
     }
 
-    public Point calculatePoint(Point osnv, Point verx, double hsec) {
-        double proectX = Math.abs(osnv.getX() - verx.getX());
-        double proectZ = Math.abs(osnv.getZ() - verx.getZ());
-        double dBx = (Math.sqrt(Math.pow(proectX, 2) + Math.pow(proectZ, 2)));
-        double dBy = Math.sqrt(Math.pow(proectX, 2) + Math.pow(Math.abs(osnv.getY() - verx.getY()), 2) + Math.pow(proectZ, 2));
-        double a1x = calculatePointBetweenTwoPointWithLimit(new Point(0, 0, 0), new Point(dBx, dBy, 0), hsec);
-        double v = 0;
-        double a = Math.sqrt(Math.pow(osnv.getX() - verx.getX(), 2) + Math.pow(osnv.getZ() - verx.getZ(), 2));
-        if (a != 0) {
-            v = proectZ / a;
-        }
-        double alpha = Math.asin(v);
-        double deltA1x = a * Math.cos(alpha);
-        double deltA1z = a * Math.sin(alpha);
-        return new Point(osnv.getX() + deltA1x, hsec, osnv.getZ() + deltA1z);
-    }
-
-    public double cutPyramid(Pyramid pyramid, double hsec) {
-        Pyramid miniPyramid = new Pyramid(pyramid.getHeadPoint(),
-                calculatePoint(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), hsec),
-                calculatePoint(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), hsec),
-                calculatePoint(pyramid.getHeadPoint(), pyramid.getThirdBasePoint(), hsec));
-        double spacePyramid = calculateSpacePyramid(pyramid);
-        double spaceMiniPyramid = calculateSpacePyramid(miniPyramid);
-        return spacePyramid / spaceMiniPyramid;
-    }
 }
