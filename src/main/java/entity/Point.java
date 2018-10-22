@@ -5,6 +5,9 @@ public class Point {
     private double y;
     private double z;
 
+    public Point() {
+    }
+
     public Point(double x, double y, double z) {
         this.x = x;
         this.y = y;
@@ -13,8 +16,8 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Точка с координатами" +
-                "x=" + x + ",y=" + y + ",z=" + z;
+        return "Point with coordinates " +
+                "x=" + x + ", y=" + y + ", z=" + z;
     }
 
     public double getX() {

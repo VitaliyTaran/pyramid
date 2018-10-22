@@ -1,39 +1,38 @@
 import entity.Point;
 import entity.Pyramid;
+import entity.Vector;
 
 public class Calculator {
-    public double getDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
+    public double calculateDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
         return Math.sqrt(Math.pow((firstPoint.getX() - secondPoint.getX()), 2)
                 + Math.pow((firstPoint.getY() - secondPoint.getY()), 2)
                 + Math.pow((firstPoint.getZ() - secondPoint.getZ()), 2));
     }
 
-    public double getSpacePyramid(Pyramid pyramid) {
-        Point vectorHeadFirstBasePoint = new Point(
-                pyramid.getHeadPoint().getX() - pyramid.getFirstBasePoint().getX(),
-                pyramid.getHeadPoint().getY() - pyramid.getFirstBasePoint().getY(),
-                pyramid.getHeadPoint().getZ() - pyramid.getFirstBasePoint().getZ());
-        Point vectorHeadSecondBasePoint = new Point(
-                pyramid.getHeadPoint().getX() - pyramid.getSecondBasePoint().getX(),
-                pyramid.getHeadPoint().getY() - pyramid.getSecondBasePoint().getY(),
-                pyramid.getHeadPoint().getZ() - pyramid.getSecondBasePoint().getZ());
-        Point vectorHeadThirdHeadPoint = new Point(
-                pyramid.getHeadPoint().getX() - pyramid.getThirdBasePoint().getX(),
-                pyramid.getHeadPoint().getY() - pyramid.getThirdBasePoint().getY(),
-                pyramid.getHeadPoint().getZ() - pyramid.getThirdBasePoint().getZ());
+    private Vector calculateVector(Point firstPoint, Point secondPoint) {
+        return new Vector(
+                firstPoint.getX() - secondPoint.getX(),
+                firstPoint.getY() - secondPoint.getY(),
+                firstPoint.getZ() - secondPoint.getZ());
+    }
 
-        return (vectorHeadFirstBasePoint.getX() * vectorHeadSecondBasePoint.getY() * vectorHeadThirdHeadPoint.getZ()
+    public double calculateSpacePyramid(Pyramid pyramid) {
+        Vector vectorHeadFirstBasePoint = calculateVector(pyramid.getHeadPoint(), pyramid.getFirstBasePoint());
+        Vector vectorHeadSecondBasePoint = calculateVector(pyramid.getHeadPoint(), pyramid.getSecondBasePoint());
+        Vector vectorHeadThirdHeadPoint = calculateVector(pyramid.getHeadPoint(), pyramid.getThirdBasePoint());
+
+        return Math.abs((vectorHeadFirstBasePoint.getX() * vectorHeadSecondBasePoint.getY() * vectorHeadThirdHeadPoint.getZ()
                 + vectorHeadThirdHeadPoint.getX() * vectorHeadFirstBasePoint.getY() * vectorHeadSecondBasePoint.getZ()
                 + vectorHeadFirstBasePoint.getZ() * vectorHeadSecondBasePoint.getX() * vectorHeadThirdHeadPoint.getY()
                 - vectorHeadThirdHeadPoint.getX() * vectorHeadSecondBasePoint.getY() * vectorHeadFirstBasePoint.getZ()
                 - vectorHeadFirstBasePoint.getX() * vectorHeadThirdHeadPoint.getY() * vectorHeadSecondBasePoint.getZ()
-                - vectorHeadSecondBasePoint.getX() * vectorHeadFirstBasePoint.getY() * vectorHeadThirdHeadPoint.getZ()) / 6;
+                - vectorHeadSecondBasePoint.getX() * vectorHeadFirstBasePoint.getY() * vectorHeadThirdHeadPoint.getZ())) / 6;
     }
 
-    private double getTriangleSquare(Point first, Point second, Point third) {
-        double distanceBetweenFirstSecond = getDistanceBetweenPoints(first, second);
-        double distanceBetweenFirstThird = getDistanceBetweenPoints(first, third);
-        double distanceBetweenSecondThird = getDistanceBetweenPoints(second, third);
+    private double calculateTriangleSquare(Point first, Point second, Point third) {
+        double distanceBetweenFirstSecond = calculateDistanceBetweenPoints(first, second);
+        double distanceBetweenFirstThird = calculateDistanceBetweenPoints(first, third);
+        double distanceBetweenSecondThird = calculateDistanceBetweenPoints(second, third);
         double semiperimeter = (distanceBetweenFirstSecond + distanceBetweenFirstThird + distanceBetweenSecondThird) / 2;
         return Math.sqrt(semiperimeter
                 * (semiperimeter - distanceBetweenFirstSecond)
@@ -41,11 +40,94 @@ public class Calculator {
                 * semiperimeter - distanceBetweenSecondThird);
     }
 
-    public double getSummSquareTriangles(Pyramid pyramid) {
+    public double calculateSumSquareTriangles(Pyramid pyramid) {
 
-        return getTriangleSquare(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), pyramid.getSecondBasePoint())
-                + getTriangleSquare(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), pyramid.getThirdBasePoint())
-                + getTriangleSquare(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), pyramid.getThirdBasePoint())
-                + getTriangleSquare(pyramid.getFirstBasePoint(), pyramid.getSecondBasePoint(), pyramid.getThirdBasePoint());
+        return calculateTriangleSquare(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), pyramid.getSecondBasePoint())
+                + calculateTriangleSquare(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), pyramid.getThirdBasePoint())
+                + calculateTriangleSquare(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), pyramid.getThirdBasePoint())
+                + calculateTriangleSquare(pyramid.getFirstBasePoint(), pyramid.getSecondBasePoint(), pyramid.getThirdBasePoint());
+    }
+
+    public boolean isPyramid(Pyramid pyramid) {
+        return calculateSpacePyramid(pyramid) > 0;
+    }
+
+    public boolean isPyramidBasedOnCoordinatePlane(Pyramid pyramid, CoordinatePlane coordinatePlane) {
+        Point points[] = {pyramid.getFirstBasePoint(),
+                pyramid.getSecondBasePoint(),
+                pyramid.getThirdBasePoint()};
+        boolean result = true;
+        switch (coordinatePlane) {
+            case XOY:
+                for (Point point : points) {
+                    if (point.getZ() != 0) {
+                        result = false;
+                        break;
+                    }
+                }
+                break;
+            case XOZ:
+                for (Point point : points) {
+                    if (point.getY() != 0) {
+                        result = false;
+                        break;
+                    }
+                }
+                break;
+            case YOZ:
+                for (Point point : points) {
+                    if (point.getX() != 0) {
+                        result = false;
+                        break;
+                    }
+                }
+                break;
+        }
+        return result;
+    }
+
+    private double calculatePointBetweenTwoPointWithLimit(Point firstPoint, Point secondPoint, double yLimiter) {
+        double dY = Math.abs(firstPoint.getY() - secondPoint.getY());
+        double dX = Math.abs(firstPoint.getX() - secondPoint.getX());
+        Point result = new Point(0d, yLimiter, 0d);
+        double hy = 0;
+        if (secondPoint.getY() >= firstPoint.getY()) {
+            hy = yLimiter - firstPoint.getY();
+        } else {
+            hy = yLimiter - secondPoint.getY();
+        }
+        if (firstPoint.getX() <= secondPoint.getX()) {
+            result.setX(firstPoint.getX() + (dX * hy) / dY);
+        } else {
+            result.setX(secondPoint.getX() + (dX * hy) / dY);
+        }
+        return result.getX();
+    }
+
+    public Point calculatePoint(Point osnv, Point verx, double hsec) {
+        double proectX = Math.abs(osnv.getX() - verx.getX());
+        double proectZ = Math.abs(osnv.getZ() - verx.getZ());
+        double dBx = (Math.sqrt(Math.pow(proectX, 2) + Math.pow(proectZ, 2)));
+        double dBy = Math.sqrt(Math.pow(proectX, 2) + Math.pow(Math.abs(osnv.getY() - verx.getY()), 2) + Math.pow(proectZ, 2));
+        double a1x = calculatePointBetweenTwoPointWithLimit(new Point(0, 0, 0), new Point(dBx, dBy, 0), hsec);
+        double v = 0;
+        double a = Math.sqrt(Math.pow(osnv.getX() - verx.getX(), 2) + Math.pow(osnv.getZ() - verx.getZ(), 2));
+        if (a != 0) {
+            v = proectZ / a;
+        }
+        double alpha = Math.asin(v);
+        double deltA1x = a * Math.cos(alpha);
+        double deltA1z = a * Math.sin(alpha);
+        return new Point(osnv.getX() + deltA1x, hsec, osnv.getZ() + deltA1z);
+    }
+
+    public double cutPyramid(Pyramid pyramid, double hsec) {
+        Pyramid miniPyramid = new Pyramid(pyramid.getHeadPoint(),
+                calculatePoint(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), hsec),
+                calculatePoint(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), hsec),
+                calculatePoint(pyramid.getHeadPoint(), pyramid.getThirdBasePoint(), hsec));
+        double spacePyramid = calculateSpacePyramid(pyramid);
+        double spaceMiniPyramid = calculateSpacePyramid(miniPyramid);
+        return spacePyramid / spaceMiniPyramid;
     }
 }
