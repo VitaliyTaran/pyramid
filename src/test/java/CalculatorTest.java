@@ -64,9 +64,9 @@ public class CalculatorTest {
     }
 
     @Test
-    public void calculatePointTest() {
+    public void planeSectionOfPyramidTest() {
         Calculator calculator = new Calculator();
-        Point point = calculator.calculatePointOnHeight(new Point(0, 0, 0), new Point(6, 6, 0), 5);
-        System.out.println(point.toString());
+        double expected = calculator.planeSectionOfPyramid(TESTING_PYRAMID, 4);
+        Assert.assertEquals(expected, 6.75, DELTA);
     }
 }

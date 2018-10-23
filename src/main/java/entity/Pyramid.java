@@ -17,6 +17,16 @@ public class Pyramid {
         return headPoint;
     }
 
+    @Override
+    public String toString() {
+        return "Pyramid{" +
+                "headPoint=" + headPoint +
+                ",\n firstBasePoint=" + firstBasePoint +
+                ",\n secondBasePoint=" + secondBasePoint +
+                ",\n thirdBasePoint=" + thirdBasePoint +
+                '}';
+    }
+
     public Point getFirstBasePoint() {
         return firstBasePoint;
     }

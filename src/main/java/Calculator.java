@@ -86,27 +86,45 @@ public class Calculator {
         return result;
     }
 
-    public Point calculatePointOnHeight(Point firstPoint, Point secondPoint, double height) {
+    private Point calculatePointOnHeight(Point firstPoint, Point secondPoint, double height) {
         Point sepSecondPoint = new Point(secondPoint.getX(), firstPoint.getY(), secondPoint.getZ());
         double distanceFirstAndSecond = calculateDistanceBetweenPoints(firstPoint, secondPoint);
         double distanceFirstAndSepSecond = Math.sqrt(Math.pow(firstPoint.getX() - sepSecondPoint.getX(), 2) + Math.pow(firstPoint.getZ() - sepSecondPoint.getZ(), 2));
-        double hY = 0;
+        double hY;
         if (firstPoint.getY() <= secondPoint.getY()) {
             hY = height - firstPoint.getY();
         } else {
             hY = height - secondPoint.getY();
         }
-        double distanceSeconSepSecond = Math.sqrt(Math.pow(distanceFirstAndSecond, 2) - Math.pow(distanceFirstAndSepSecond, 2));
-        double hX = hY * distanceFirstAndSepSecond / distanceSeconSepSecond;
-        double dX = Math.abs(firstPoint.getX() - sepSecondPoint.getX());
+        double distanceSecondSepSecond = Math.sqrt(Math.pow(distanceFirstAndSecond, 2) - Math.pow(distanceFirstAndSepSecond, 2));
+        double hX = hY * distanceFirstAndSepSecond / distanceSecondSepSecond;
         double dZ = Math.abs(firstPoint.getZ() - sepSecondPoint.getZ());
         double betta = Math.acos(dZ / distanceFirstAndSepSecond);
-        double proectionX = hX * Math.sin(betta);
-        double proectionZ = hX * Math.cos(betta);
-        sepSecondPoint.setX(firstPoint.getX() + proectionX);
+        double projectionX = hX * Math.sin(betta);
+        double projectionZ = hX * Math.cos(betta);
+        double xMax = Math.max(firstPoint.getX(), secondPoint.getX());
+        double zMax = Math.max(firstPoint.getZ(), secondPoint.getZ());
+        if (xMax > (firstPoint.getX() + projectionX)) {
+            sepSecondPoint.setX(firstPoint.getX() + projectionX);
+        } else {
+            sepSecondPoint.setX(firstPoint.getX() - projectionX);
+        }
         sepSecondPoint.setY(height);
-        sepSecondPoint.setZ(firstPoint.getZ() + proectionZ);
+        if (zMax > (firstPoint.getZ() + projectionZ)) {
+            sepSecondPoint.setZ(firstPoint.getZ() + projectionZ);
+        } else {
+            sepSecondPoint.setZ(firstPoint.getZ() - projectionZ);
+        }
         return sepSecondPoint;
     }
 
+    public double planeSectionOfPyramid(Pyramid pyramid, double height) {
+        Point firstPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), height);
+        Point secondPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), height);
+        Point thirdPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getThirdBasePoint(), height);
+        Pyramid miniPyramid = new Pyramid(pyramid.getHeadPoint(), firstPointOnHeight, secondPointOnHeight, thirdPointOnHeight);
+        double spacePyramid = calculateSpacePyramid(pyramid);
+        double spaceMiniPyramid = calculateSpacePyramid(miniPyramid);
+        return spacePyramid / spaceMiniPyramid;
+    }
 }
