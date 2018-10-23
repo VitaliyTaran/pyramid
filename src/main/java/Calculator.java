@@ -4,12 +4,14 @@ import entity.Vector;
 
 public class Calculator {
     private double calculateDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
+
         return Math.sqrt(Math.pow((firstPoint.getX() - secondPoint.getX()), 2)
                 + Math.pow((firstPoint.getY() - secondPoint.getY()), 2)
                 + Math.pow((firstPoint.getZ() - secondPoint.getZ()), 2));
     }
 
     private Vector calculateVector(Point firstPoint, Point secondPoint) {
+
         return new Vector(
                 firstPoint.getX() - secondPoint.getX(),
                 firstPoint.getY() - secondPoint.getY(),
@@ -17,6 +19,7 @@ public class Calculator {
     }
 
     public double calculateSpacePyramid(Pyramid pyramid) {
+
         Vector vectorHeadFirstBasePoint = calculateVector(pyramid.getHeadPoint(), pyramid.getFirstBasePoint());
         Vector vectorHeadSecondBasePoint = calculateVector(pyramid.getHeadPoint(), pyramid.getSecondBasePoint());
         Vector vectorHeadThirdHeadPoint = calculateVector(pyramid.getHeadPoint(), pyramid.getThirdBasePoint());
@@ -30,6 +33,7 @@ public class Calculator {
     }
 
     private double calculateTriangleSquare(Point first, Point second, Point third) {
+
         double distanceBetweenFirstSecond = calculateDistanceBetweenPoints(first, second);
         double distanceBetweenFirstThird = calculateDistanceBetweenPoints(first, third);
         double distanceBetweenSecondThird = calculateDistanceBetweenPoints(second, third);
@@ -53,6 +57,7 @@ public class Calculator {
     }
 
     public boolean isPyramidBasedOnCoordinatePlane(Pyramid pyramid, CoordinatePlane coordinatePlane) {
+
         Point points[] = {pyramid.getFirstBasePoint(),
                 pyramid.getSecondBasePoint(),
                 pyramid.getThirdBasePoint()};
@@ -119,6 +124,7 @@ public class Calculator {
     }
 
     public double planeSectionOfPyramid(Pyramid pyramid, double height) {
+
         Point firstPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getFirstBasePoint(), height);
         Point secondPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getSecondBasePoint(), height);
         Point thirdPointOnHeight = calculatePointOnHeight(pyramid.getHeadPoint(), pyramid.getThirdBasePoint(), height);

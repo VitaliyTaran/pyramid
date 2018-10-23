@@ -1,3 +1,5 @@
+package data;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DataReader {
-    private static final String WORD_DECIMETER = " ";
+    private static final String WORD_DELIMITER = " ";
 
     public List<String> readFile(String nameOfFileWithWay) {
         List<String> result = new ArrayList<String>();
@@ -17,7 +19,7 @@ public class DataReader {
             BufferedReader reader = new BufferedReader(fileReader);
             Scanner scanner = new Scanner(reader);
             while (scanner.hasNext()) {
-                String[] words = scanner.nextLine().split(WORD_DECIMETER);
+                String[] words = scanner.nextLine().split(WORD_DELIMITER);
                 result.addAll(Arrays.asList(words));
             }
             scanner.close();
