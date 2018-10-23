@@ -11,16 +11,16 @@ public class DataValidatorTest {
 
     @Test
     public void converterTest() {
-        //given
+        //Given
         DataReader reader = new DataReader();
         DataValidator converter = new DataValidator();
         List<Double> actual = new ArrayList<Double>();
         actual.add(1.1);
         actual.add(1.2);
-        //when
+        //When
         List<String> readFileToList = reader.readFile(TEST_FILE_WAY_AND_NAME);
         List<Double> resultList = converter.checkList(readFileToList);
-        //then
+        //Then
         Assert.assertEquals(resultList, actual);
     }
 }
