@@ -1,8 +1,14 @@
-import entity.Point;
-import entity.Pyramid;
-import entity.Vector;
+package com.epam.geometry;
+
+import com.epam.geometry.entity.Point;
+import com.epam.geometry.entity.Pyramid;
+import com.epam.geometry.entity.Vector;
+import com.epam.geometry.exaptions.NotAEnumException;
+import org.apache.log4j.Logger;
 
 public class Calculator {
+   private final static Logger logger = Logger.getLogger(Calculator.class);
+
     private double calculateDistanceBetweenPoints(Point firstPoint, Point secondPoint) {
 
         return Math.sqrt(Math.pow((firstPoint.getX() - secondPoint.getX()), 2)
@@ -62,36 +68,43 @@ public class Calculator {
                 pyramid.getSecondBasePoint(),
                 pyramid.getThirdBasePoint()};
         boolean result = true;
-        switch (coordinatePlane) {
-            case XOY:
-                for (Point point : points) {
-                    if (point.getZ() != 0) {
-                        result = false;
-                        break;
+        try {
+            switch (coordinatePlane) {
+                case XOY:
+                    for (Point point : points) {
+                        if (point.getZ() != 0) {
+                            result = false;
+                            break;
+                        }
                     }
-                }
-                break;
-            case XOZ:
-                for (Point point : points) {
-                    if (point.getY() != 0) {
-                        result = false;
-                        break;
+                    break;
+                case XOZ:
+                    for (Point point : points) {
+                        if (point.getY() != 0) {
+                            result = false;
+                            break;
+                        }
                     }
-                }
-                break;
-            case YOZ:
-                for (Point point : points) {
-                    if (point.getX() != 0) {
-                        result = false;
-                        break;
+                    break;
+                case YOZ:
+                    for (Point point : points) {
+                        if (point.getX() != 0) {
+                            result = false;
+                            break;
+                        }
                     }
-                }
-                break;
+                    break;
+                default:
+                    throw new NotAEnumException("CoordinatePlane not a enum");
+            }
+        }catch (NotAEnumException e ){
+            logger.warn(e);
         }
+
         return result;
     }
 
-    private Point calculatePointOnHeight(Point firstPoint, Point secondPoint, double height) {
+    public Point calculatePointOnHeight(Point firstPoint, Point secondPoint, double height) {
         Point sepSecondPoint = new Point(secondPoint.getX(), firstPoint.getY(), secondPoint.getZ());
         double distanceFirstAndSecond = calculateDistanceBetweenPoints(firstPoint, secondPoint);
         double distanceFirstAndSepSecond = Math.sqrt(Math.pow(firstPoint.getX() - sepSecondPoint.getX(), 2) + Math.pow(firstPoint.getZ() - sepSecondPoint.getZ(), 2));

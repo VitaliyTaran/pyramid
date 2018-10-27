@@ -1,4 +1,6 @@
-import data.DataReader;
+package com.epam.geometry;
+
+import com.epam.geometry.data.DataReader;
 import org.junit.Assert;
 import org.junit.Test;
 

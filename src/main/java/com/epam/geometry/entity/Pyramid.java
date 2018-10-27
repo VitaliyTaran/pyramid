@@ -1,6 +1,7 @@
-package entity;
+package com.epam.geometry.entity;
 
 public class Pyramid {
+    private Long id;
     private Point headPoint;
     private Point firstBasePoint;
     private Point secondBasePoint;
@@ -13,18 +14,16 @@ public class Pyramid {
         this.thirdBasePoint = thirdBasePoint;
     }
 
-    public Point getHeadPoint() {
-        return headPoint;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "Pyramid{" +
-                "headPoint=" + headPoint +
-                ",\n firstBasePoint=" + firstBasePoint +
-                ",\n secondBasePoint=" + secondBasePoint +
-                ",\n thirdBasePoint=" + thirdBasePoint +
-                '}';
+    public Long getId() {
+        return id;
+    }
+
+    public Point getHeadPoint() {
+        return headPoint;
     }
 
     public Point getFirstBasePoint() {
@@ -39,4 +38,14 @@ public class Pyramid {
         return thirdBasePoint;
     }
 
+
+    @Override
+    public String toString() {
+        return "Pyramid{" +
+                "headPoint=" + headPoint +
+                ",\n firstBasePoint=" + firstBasePoint +
+                ",\n secondBasePoint=" + secondBasePoint +
+                ",\n thirdBasePoint=" + thirdBasePoint +
+                '}';
+    }
 }

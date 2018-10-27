@@ -1,5 +1,7 @@
-import data.DataReader;
-import data.DataValidator;
+package com.epam.geometry;
+
+import com.epam.geometry.data.DataReader;
+import com.epam.geometry.data.DataValidator;
 import org.junit.Assert;
 import org.junit.Test;
 

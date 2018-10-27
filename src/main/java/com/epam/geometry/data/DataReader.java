@@ -1,7 +1,8 @@
-package data;
+package com.epam.geometry.data;
+
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DataReader {
-    private static final String WORD_DELIMITER = " ";
+    final static Logger logger = Logger.getLogger(DataReader.class);
+
 
     public List<String> readFile(String nameOfFileWithWay) {
         List<String> result = new ArrayList<String>();
@@ -18,18 +20,18 @@ public class DataReader {
             FileReader fileReader = new FileReader(nameOfFileWithWay);
             BufferedReader reader = new BufferedReader(fileReader);
             Scanner scanner = new Scanner(reader);
+            DataParser parser = new DataParser();
             while (scanner.hasNext()) {
-                String[] words = scanner.nextLine().split(WORD_DELIMITER);
+                String line = scanner.nextLine();
+                String[] words = parser.parse(line);
                 result.addAll(Arrays.asList(words));
             }
             scanner.close();
             reader.close();
             fileReader.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn(e);
         }
         return result;
     }
